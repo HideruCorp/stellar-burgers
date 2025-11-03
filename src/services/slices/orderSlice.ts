@@ -35,6 +35,17 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+export const fetchOrderByNumber = createAsyncThunk(
+  'order/fetchOrderByNumber',
+  async (number: number) => {
+    const response = await getOrderByNumberApi(number);
+    if (response.success && response.orders.length > 0) {
+      return response.orders[0] as TOrder;
+    }
+    throw new Error('Order not found');
+  }
+);
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -64,6 +75,21 @@ const orderSlice = createSlice({
         state.create.loading = false;
         state.create.error = action.error.message || 'Failed to create order';
       })
+
+      // Детали заказа
+      .addCase(fetchOrderByNumber.pending, (state) => {
+        state.details.loading = true;
+        state.details.order = null;
+        state.details.error = null;
+      })
+      .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
+        state.details.loading = false;
+        state.details.order = action.payload;
+      })
+      .addCase(fetchOrderByNumber.rejected, (state, action) => {
+        state.details.loading = false;
+        state.details.error = action.error.message || 'Failed to fetch order';
+      });
   }
 });
 
@@ -76,5 +102,12 @@ export const selectCreationProcessing = (state: RootState) =>
   state.order.create.loading;
 export const selectCreationError = (state: RootState) =>
   state.order.create.error;
+
+export const selectOrderDetails = (state: RootState) =>
+  state.order.details.order;
+export const selectOrderDetailsLoading = (state: RootState) =>
+  state.order.details.loading;
+export const selectOrderDetailsError = (state: RootState) =>
+  state.order.details.error;
 
 export default orderSlice.reducer;
