@@ -16,7 +16,11 @@ import {
   selectIngredientsLoading
 } from '../../services/slices/ingredientsSlice';
 
-export const OrderInfo: FC = () => {
+type OrderInfoProps = {
+  showOrderNumber?: boolean;
+};
+
+export const OrderInfo: FC<OrderInfoProps> = ({ showOrderNumber = true }) => {
   const { number } = useParams<{ number: string }>();
   const dispatch = useDispatch();
 
@@ -87,5 +91,7 @@ export const OrderInfo: FC = () => {
     return <p className={`pt-6 text text_type_main-medium`}>Заказ не найден</p>;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo!} />;
+  return (
+    <OrderInfoUI orderInfo={orderInfo!} showOrderNumber={showOrderNumber} />
+  );
 };
