@@ -53,10 +53,12 @@ const orderSlice = createSlice({
     clearCreationState(state) {
       state.create.order = null;
       state.create.error = null;
+      state.create.loading = false;
     },
     clearDetailsState(state) {
       state.details.order = null;
       state.details.error = null;
+      state.details.loading = false;
     }
   },
   extraReducers: (builder) => {

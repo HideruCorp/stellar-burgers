@@ -79,9 +79,13 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (orderLoading || ingredientsLoading) {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  if (!orderInfo || orderError) {
+    return <p className={`pt-6 text text_type_main-medium`}>Заказ не найден</p>;
+  }
+
+  return <OrderInfoUI orderInfo={orderInfo!} />;
 };
