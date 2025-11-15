@@ -1,5 +1,12 @@
 /// <reference types="cypress" />
 
+import {
+  MODAL,
+  MODAL_TITLE,
+  MODAL_CLOSE,
+  MODAL_OVERLAY
+} from 'cypress/support/selectors';
+
 describe('Страница конструктора бургера', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/ingredients', { fixture: 'ingredients.json' }).as(
@@ -43,12 +50,12 @@ describe('Страница конструктора бургера', () => {
 
       cy.contains('Краторная булка N-200i').click();
 
-      cy.get('[data-cy="modal"]').should('be.visible');
-      cy.get('[data-cy="modal-title"]')
+      cy.get(MODAL).should('be.visible');
+      cy.get(MODAL_TITLE)
         .should('be.visible')
         .and('have.text', 'Детали ингредиента');
 
-      cy.get('[data-cy="modal"]').within(() => {
+      cy.get(MODAL).within(() => {
         cy.contains('Краторная булка N-200i').should('be.visible');
         cy.contains('Калории, ккал').should('be.visible');
       });
@@ -59,11 +66,11 @@ describe('Страница конструктора бургера', () => {
       cy.wait('@getIngredients');
 
       cy.contains('Краторная булка N-200i').click();
-      cy.get('[data-cy="modal"]').should('be.visible');
+      cy.get(MODAL).should('be.visible');
 
-      cy.get('[data-cy="modal-close"]').click();
+      cy.get(MODAL_CLOSE).click();
 
-      cy.get('[data-cy="modal"]').should('not.exist');
+      cy.get(MODAL).should('not.exist');
     });
 
     it('закрывается по клику на оверлей', () => {
@@ -71,11 +78,23 @@ describe('Страница конструктора бургера', () => {
       cy.wait('@getIngredients');
 
       cy.contains('Краторная булка N-200i').click();
-      cy.get('[data-cy="modal"]').should('be.visible');
+      cy.get(MODAL).should('be.visible');
 
-      cy.get('[data-cy="modal-overlay"]').click({ force: true });
+      cy.get(MODAL_OVERLAY).click({ force: true });
 
-      cy.get('[data-cy="modal"]').should('not.exist');
+      cy.get(MODAL).should('not.exist');
+    });
+
+    it('закрывается по нажатию клавиши Esc', () => {
+      cy.visit('/');
+      cy.wait('@getIngredients');
+
+      cy.contains('Краторная булка N-200i').click();
+      cy.get(MODAL).should('be.visible');
+
+      cy.get('body').type('{esc}');
+
+      cy.get(MODAL).should('not.exist');
     });
   });
 
@@ -131,7 +150,7 @@ describe('Страница конструктора бургера', () => {
       cy.contains('идентификатор заказа').should('be.visible');
       cy.contains('12345').should('be.visible');
 
-      cy.get('[data-cy="modal-close"]').click();
+      cy.get(MODAL_CLOSE).click();
 
       cy.contains('идентификатор заказа').should('not.exist');
 
